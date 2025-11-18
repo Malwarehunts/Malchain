@@ -1,6 +1,7 @@
 # Framework Table
 
-![MalChain Cover](images/malchain-cover.png)
+![MalChain Cover](./images/malchain-cover.png)
+
 
 
 | Initial Access | Execution | Persistence | Defense Evasion | Lateral Movement | Exfiltration |
