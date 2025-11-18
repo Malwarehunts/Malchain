@@ -1,6 +1,8 @@
 # Framework Table
 
-![Cover](../images/malchain-cover.png)
+<p align="center">
+  <img src="../images/malchain-cover.png" width="550">
+</p>
 
 
 
