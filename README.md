@@ -32,6 +32,6 @@ We welcome:
 
 ## License
 
-MIT License - See LICENSE for details.
+MIT License - See LICENSE.md for details.
 
 **Updated**: November 2025
