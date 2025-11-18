@@ -1,5 +1,8 @@
 # Framework Table
 
+![MalChain Cover](images/malchain-cover.png)
+
+
 | Initial Access | Execution | Persistence | Defense Evasion | Lateral Movement | Exfiltration |
 |----------------|-----------|-------------|------------------|------------------|--------------|
 | Removable Media / File Sharing | User-Executed Files | Startup Folder & Autorun Entries | Obfuscation & Packing | Living Off the Land | HTTP / HTTPS |
