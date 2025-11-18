@@ -4,6 +4,11 @@ MalChain is an Open-source malware kill chain framework with 42 techniques, CVE 
 ## Overview
 
 MalChain is a comprehensive framework for understanding malware behavior, organized across 6 attack phases from initial access to data exfiltration. It includes CVE mappings, detection methods, and real-world malware analysis.
+
+## Quick Start
+
+📖 **[View Complete Framework](docs/FRAMEWORK.md)**
+
 ## Framework Structure
 
 | Phase | Techniques | Focus |
