@@ -22,7 +22,7 @@ MalChain is a comprehensive framework for understanding malware behavior, organi
 
 ## Contributing
 
-MalChain is open for contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+MalChain is open for contributions! 
 
 We welcome:
 - Malware case studies
