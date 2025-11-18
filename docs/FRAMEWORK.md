@@ -1,6 +1,7 @@
 # Framework Table
 
-![MalChain Cover](./images/malchain-cover.png)
+![Cover](../images/malchain-cover.png)
+
 
 
 
