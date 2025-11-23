@@ -1,4 +1,4 @@
-# Framework Table
+# Malchain
 
 <p align="center">
   <img src="../images/malchain-cover.png" width="550">
