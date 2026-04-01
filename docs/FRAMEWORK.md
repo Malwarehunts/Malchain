@@ -15,7 +15,7 @@
 |                                      |                             |                                      | Living-off-the-Land for Evasion | Directory Services Targeting         | Stenographic Data Transfer               |
 |                                      |                             |                                      | Anti-Forensics & Cleanup        | Cloud & Hybrid Lateral Movement      | Multi-Channel Redundant Exfiltration     |
 
-**Ingress - Initial Access Capability**
+## Ingress - Initial Access Capability
 
 Ingress represents the attacker's first successful interaction with the target environment. This phase is primarily focused on abusing human trust, software trust, or hardware trust. Ingress mechanisms include removable media, malvertising, supply chain compromise, credential abuse, malicious USB devices, and watering hole attacks.
 
@@ -38,7 +38,7 @@ Ingress methods includes:
 
 Ingress decisions heavily influence the attacker's stealth and options in later phases.
 
-**Activation - Execution Capability**
+## Activation - Execution Capability
 
 Activation converts access into action. This phase determines how and where attacker-controlled logic is executed within the target environment.
 
@@ -62,7 +62,7 @@ Activation methods includes:
 
 Activation is often chained with concealment techniques to minimize detection.
 
-**Anchoring - Persistence Capability**
+## Anchoring - Persistence Capability
 
 Anchoring ensures that attacker access survives reboots, logouts, and routine system maintenance. Persistence is not a single technique but a reliability strategy. Anchoring methods include:
 
@@ -77,7 +77,7 @@ Anchoring ensures that attacker access survives reboots, logouts, and routine sy
 
 The primary output of anchoring is long-term operational presence with minimal reinfection cost.
 
-**Concealment - Defense Evasion Capability**
+## Concealment - Defense Evasion Capability
 
 Concealment reduces the likelihood that malicious activity will be detected, analyzed, or responded to. This phase actively degrades defender visibility and confidence.
 
@@ -96,7 +96,7 @@ Concealment techniques include:
 
 Concealment enables extended dwell time and increases the success of expansion and extraction.
 
-**Expansion - Lateral Movement Capability**
+## Expansion - Lateral Movement Capability
 
 Expansion focuses on increasing the attacker's control surface inside the environment. This phase transforms a single compromised system into organizational compromise.
 
@@ -115,7 +115,7 @@ Expansion techniques include:
 
 Outputs include additional hosts, elevated privileges, and increased operational resilience.
 
-**Extraction - Exfiltration & Control Capability**
+## Extraction - Exfiltration & Control Capability
 
 Extraction is where attackers realize value from their intrusion. This includes data theft, continuous command and control, and operational leverage.
 
