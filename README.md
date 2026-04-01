@@ -42,7 +42,7 @@ Organizations can apply MalChain to:
 
 ## View Framework
 
-📖 **[View Complete Framework](docs/FRAMEWORK.md)**
+📖 **[View Complete Framework](docs/PHASES.md)**
 
 ## Contributing
 
