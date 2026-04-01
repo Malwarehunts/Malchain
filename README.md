@@ -30,6 +30,16 @@ MalChain organizes adversary behavior into six primary phases:
 
 Each phase represents a set of attacker objectives and capabilities rather than specific techniques.
 
+## Using MalChain in Practice
+
+Organizations can apply MalChain to:
+
+- Threat modeling exercises
+- SOC alert design
+- Incident response playbooks
+- Purple-team validation
+- Malware research documentation
+
 ## Contributing
 
 MalChain is open for contributions! 
