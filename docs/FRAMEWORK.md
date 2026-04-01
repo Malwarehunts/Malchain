@@ -1,5 +1,7 @@
 # Malchain
 
+## Unified table
+
 | Ingress                              | Activation                  | Anchoring                            | Concealment                     | Expansion                            | Extraction                               |
 | ------------------------------------ | --------------------------- | ------------------------------------ | ------------------------------- | ------------------------------------ | ---------------------------------------- |
 | Removable Media & File Transfer      | User-Executed Files         | Startup & Logon Execution            | Obfuscation & Packing           | Living-off-the-Land Lateral Movement | HTTP / HTTPS Data Exfiltration           |
