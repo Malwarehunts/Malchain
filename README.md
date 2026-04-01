@@ -40,6 +40,10 @@ Organizations can apply MalChain to:
 - Purple-team validation
 - Malware research documentation
 
+## View Framework
+
+📖 **[View Complete Framework](docs/FRAMEWORK.md)**
+
 ## Contributing
 
 MalChain is open for contributions! 
