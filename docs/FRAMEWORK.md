@@ -1,19 +1,4 @@
-# Malchain
-
-## Unified table
-
-| Ingress                              | Activation                  | Anchoring                            | Concealment                     | Expansion                            | Extraction                               |
-| ------------------------------------ | --------------------------- | ------------------------------------ | ------------------------------- | ------------------------------------ | ---------------------------------------- |
-| Removable Media & File Transfer      | User-Executed Files         | Startup & Logon Execution            | Obfuscation & Packing           | Living-off-the-Land Lateral Movement | HTTP / HTTPS Data Exfiltration           |
-| Malvertising & Drive-By Downloads    | Script-Based Activation     | Scheduled & Triggered Execution      | Fileless Malware Execution      | Credential Reuse & Relay             | DNS Tunneling                            |
-| Supply Chain Compromise              | Service-Based Execution     | Service & Daemon Persistence         | Security Tool Tampering         | Pass-the-Hash / Pass-the-Ticket      | Cloud Storage Abuse                      |
-| Credential Abuse                     | DLL Side-Loading            | Registry-Based Persistence           | Masquerading & Impersonation    | Remote Service & Protocol Abuse      | Messaging and Social Platform Channels   |
-| Malicious or Compromised USB Devices | WMI-Based Execution         | Browser-Based Persistence            | Environment & Sandbox Evasion   | Network Share Propagation            | FTP / SFTP / FTPS Transfer               |
-| Watering Hole Attacks                | Browser Extension Execution | WMI & Event Subscription Persistence | Process Injection               | Worm-like Self-Propagation           | Tor / Proxy / VPN Anonymization Channels |
-| External Remote                      | Boot / Firmware Execution   | Fileless & In-Memory Persistence     | Polymorphism & Metamorphism     | Privilege Escalation Across Hosts    | Encrypted Command-and-Control Channels   |
-| Cross-Capability                     |                             | Boot & Pre-OS Persistence            | Log & Artifact Manipulation     | Identity & Trust Relationship Abuse  | Removable Media Data Extraction          |
-|                                      |                             |                                      | Living-off-the-Land for Evasion | Directory Services Targeting         | Stenographic Data Transfer               |
-|                                      |                             |                                      | Anti-Forensics & Cleanup        | Cloud & Hybrid Lateral Movement      | Multi-Channel Redundant Exfiltration     |
+# Malchain Phases
 
 ## Ingress - Initial Access Capability
 
@@ -133,3 +118,18 @@ Extraction channels include:
 - Multi-Channel Redundant Exfiltration
 
 Extraction may occur incrementally throughout the intrusion rather than only at the end.
+
+## Unified Sub Phases table
+
+| Ingress                              | Activation                  | Anchoring                            | Concealment                     | Expansion                            | Extraction                               |
+| ------------------------------------ | --------------------------- | ------------------------------------ | ------------------------------- | ------------------------------------ | ---------------------------------------- |
+| Removable Media & File Transfer      | User-Executed Files         | Startup & Logon Execution            | Obfuscation & Packing           | Living-off-the-Land Lateral Movement | HTTP / HTTPS Data Exfiltration           |
+| Malvertising & Drive-By Downloads    | Script-Based Activation     | Scheduled & Triggered Execution      | Fileless Malware Execution      | Credential Reuse & Relay             | DNS Tunneling                            |
+| Supply Chain Compromise              | Service-Based Execution     | Service & Daemon Persistence         | Security Tool Tampering         | Pass-the-Hash / Pass-the-Ticket      | Cloud Storage Abuse                      |
+| Credential Abuse                     | DLL Side-Loading            | Registry-Based Persistence           | Masquerading & Impersonation    | Remote Service & Protocol Abuse      | Messaging and Social Platform Channels   |
+| Malicious or Compromised USB Devices | WMI-Based Execution         | Browser-Based Persistence            | Environment & Sandbox Evasion   | Network Share Propagation            | FTP / SFTP / FTPS Transfer               |
+| Watering Hole Attacks                | Browser Extension Execution | WMI & Event Subscription Persistence | Process Injection               | Worm-like Self-Propagation           | Tor / Proxy / VPN Anonymization Channels |
+| External Remote                      | Boot / Firmware Execution   | Fileless & In-Memory Persistence     | Polymorphism & Metamorphism     | Privilege Escalation Across Hosts    | Encrypted Command-and-Control Channels   |
+| Cross-Capability                     |                             | Boot & Pre-OS Persistence            | Log & Artifact Manipulation     | Identity & Trust Relationship Abuse  | Removable Media Data Extraction          |
+|                                      |                             |                                      | Living-off-the-Land for Evasion | Directory Services Targeting         | Stenographic Data Transfer               |
+|                                      |                             |                                      | Anti-Forensics & Cleanup        | Cloud & Hybrid Lateral Movement      | Multi-Channel Redundant Exfiltration     |
