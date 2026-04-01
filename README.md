@@ -1,21 +1,34 @@
-# Malchain
+# MALCHAIN
 
-MalChain is a comprehensive Open-source framework for understanding malware behavior, organized across 6 attack phases from initial access to data exfiltration. It includes detection methods and real-world malware examples.
+MalChain is an open-source, behavior-centric malware analysis and detection framework designed to model real-world adversary operations across the full intrusion lifecycle. Unlike indicator-driven or tool-centric models, MalChain focuses on attacker capabilities, trust abuse, and operational chaining.
 
-## Quick Start
+## Purpose and Scope
 
-📖 **[View Complete Framework](docs/FRAMEWORK.md)**
+The purpose of MalChain is to provide defenders, analysts, and researchers with a structured, high-fidelity model for understanding malware behavior beyond individual tools or campaigns. MalChain abstracts attacker actions into reusable operational capabilities that remain stable even as malware tooling evolves. This framework is intended for:
 
-## Framework Structure
+- Security Operations Centers (SOC)
+- Detection engineering teams
+- Incident responders
+- Malware researchers
+- Red and purple teams
+- Academic and open-source research
+
+MalChain is platform-agnostic and applies to endpoint, network, cloud, and hybrid environments.
+
+## MalChain Attack Chain Overview
+
+MalChain organizes adversary behavior into six primary phases:
 
 | Phase | Techniques | Focus |
 |-------|-----------|-------|
-| Initial Access | 6 | How malware enters systems |
-| Execution | 7 | Running malicious code |
-| Persistence | 7 | Maintaining presence |
-| Defense Evasion | 7 | Avoiding detection |
-| Lateral Movement | 3 | Spreading within networks |
-| Exfiltration | 7 | Stealing data |
+| Ingress  | 7 | How malware enters systems |
+| Activation  | 7 | Running malicious code |
+| Anchoring  | 8 | Maintaining presence |
+| Concealment  | 10 | Avoiding detection |
+| Expansion  | 10 | Spreading within networks |
+| Extraction  | 10 | Stealing data |
+
+Each phase represents a set of attacker objectives and capabilities rather than specific techniques.
 
 ## Contributing
 
@@ -30,4 +43,4 @@ We welcome:
 
 MIT License - See LICENSE.md for details.
 
-**Updated**: November 2025
+**Updated**: March 2026
