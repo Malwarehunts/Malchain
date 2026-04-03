@@ -1,6 +1,6 @@
-**ACTIVATION**
+# ACTIVATION
 
-**Phase Overview**
+## Phase Overview
 
 The ACTIVATION phase encompasses all techniques and capabilities that result in attacker-controlled logic being executed within an environment. Unlike INGRESS, which focuses on entry and trust establishment, ACTIVATION focuses on process creation, runtime control, and operational capability. The transition from ACTIVATION to ANCHORING occurs when execution becomes repeatable or persistent without requiring repeated access events. This transition point is critical for containment and response.
 
