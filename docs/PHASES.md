@@ -1,6 +1,6 @@
 # Malchain Phases
 
-## **[MC-ING](/Phases/INGRESS/INGRESS.md)** - Ingress - Initial Access Capability
+## **[MC-ING](/docs/Phases/INGRESS/INGRESS.md)** - Ingress - Initial Access Capability
 
 Ingress represents the attacker's first successful interaction with the target environment. This phase is primarily focused on abusing human trust, software trust, or hardware trust. Ingress mechanisms include removable media, malvertising, supply chain compromise, credential abuse, malicious USB devices, and watering hole attacks.
 
