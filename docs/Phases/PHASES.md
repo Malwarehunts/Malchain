@@ -23,7 +23,7 @@ Ingress methods includes:
 
 Ingress decisions heavily influence the attacker's stealth and options in later phases.
 
-## **MC-ACT** - Activation - Execution Capability
+## **[MC-ACT](/docs/Phases/ACTIVATION/MC-ACT.md)** - Activation - Execution Capability
 
 Activation converts access into action. This phase determines how and where attacker-controlled logic is executed within the target environment.
 
@@ -47,7 +47,7 @@ Activation methods includes:
 
 Activation is often chained with concealment techniques to minimize detection.
 
-## **MC-ANC** - Anchoring - Persistence Capability
+## **[MC-ANC](/docs/Phases/ANCHORING/MC-ANC.md)** - Anchoring - Persistence Capability
 
 Anchoring ensures that attacker access survives reboots, logouts, and routine system maintenance. Persistence is not a single technique but a reliability strategy. Anchoring methods include:
 
@@ -62,7 +62,7 @@ Anchoring ensures that attacker access survives reboots, logouts, and routine sy
 
 The primary output of anchoring is long-term operational presence with minimal reinfection cost.
 
-## **MC-CON** - Concealment - Defense Evasion Capability
+## **[MC-CON](/docs/Phases/CONCEALMENT/MC-CON.md)** - Concealment - Defense Evasion Capability
 
 Concealment reduces the likelihood that malicious activity will be detected, analyzed, or responded to. This phase actively degrades defender visibility and confidence.
 
@@ -81,7 +81,7 @@ Concealment techniques include:
 
 Concealment enables extended dwell time and increases the success of expansion and extraction.
 
-## **MC-EXP** - Expansion - Lateral Movement Capability
+## **[MC-EXP](/docs/Phases/EXPANSION/MC-EXP.md)** - Expansion - Lateral Movement Capability
 
 Expansion focuses on increasing the attacker's control surface inside the environment. This phase transforms a single compromised system into organizational compromise.
 
@@ -100,7 +100,7 @@ Expansion techniques include:
 
 Outputs include additional hosts, elevated privileges, and increased operational resilience.
 
-## **MC-EXT** - Extraction - Exfiltration & Control Capability
+## **[MC-EXT](/docs/Phases/EXTRACTION/MC-EXT.md)** - Extraction - Exfiltration & Control Capability
 
 Extraction is where attackers realize value from their intrusion. This includes data theft, continuous command and control, and operational leverage.
 
