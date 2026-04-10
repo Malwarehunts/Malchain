@@ -1,60 +1,60 @@
-## Scheduled & Triggered Execution
+## Service & Daemon Persistence
 
 **Summary:**
 
-Scheduled & Triggered Execution refers to the automatic execution of attacker-controlled logic based on predefined schedules or system events within a target environment. This includes configuring tasks, timers, or event-driven mechanisms that initiate execution without direct user interaction. Within MalChain, this capability begins once a task or trigger reliably initiates execution according to defined conditions or timing intervals. Attackers exploit implicit trust in automation systems and maintenance routines to maintain consistent execution while reducing visibility. Operational efficiency and system management requirements often allow scheduled operations to run without continuous inspection. Trust abuse may involve disguised maintenance tasks, hidden triggers, or automated routines presented as legitimate administrative processes. Common execution methods include:
+Service & Daemon Persistence refers to the establishment of attacker-controlled execution through background services or daemons configured to run automatically within a target environment. This includes installing new services, modifying existing service definitions, or leveraging system service management mechanisms to maintain continuous execution. Within MalChain, this capability begins once a service or daemon is configured to start automatically and sustain execution across system restarts or configuration changes. Attackers exploit implicit trust in system service infrastructure and administrative tooling to maintain reliable presence with elevated privileges. System stability requirements and automated service management often allow background processes to operate with limited visibility. Trust abuse may involve service names resembling legitimate components, modified execution paths, or binaries presented as routine maintenance utilities. Common persistence methods include:
 
-* Creating scheduled tasks with recurring execution intervals  
-* Configuring event-based triggers to launch programs or scripts  
-* Scheduling commands to run during system maintenance windows  
-* Registering automated jobs to execute at system startup or shutdown  
-* Using timers or task schedulers to initiate background processes  
+* Installing new services configured for automatic startup  
+* Modifying existing service execution parameters  
+* Registering background daemons to run continuously  
+* Configuring services to restart automatically after termination  
+* Deploying services designed to maintain persistent communication  
 
 Real world usage includes:
 
-* Persistence mechanisms in enterprise intrusion campaigns  
-* Automated execution of malware during off-peak hours  
-* Coordinated deployment of ransomware or data collection tools  
-* Remote administration abuse for recurring command execution  
+* Long-term persistence mechanisms in enterprise compromise operations  
+* Continuous execution of command-and-control communication services  
+* Privileged persistence in ransomware and intrusion campaigns  
+* Maintenance of surveillance or monitoring components in targeted attacks  
 
 **Detection:**
 
-Detection relies on monitoring task scheduling systems, trigger configuration changes, and execution patterns associated with automated routines. Contextual correlation between new task creation and repeated execution behavior is essential to reduce false positives.
+Detection relies on monitoring service lifecycle events, configuration changes, and execution patterns associated with background service activity. Contextual correlation between service creation, modification, and repeated execution behavior is essential to reduce false positives.
 
-* Monitor creation or modification of scheduled tasks  
-* Detect execution of programs triggered by system events  
-* Correlate task scheduling changes with administrative activity  
-* Alert on tasks configured to run from user-controlled directories  
-* Identify rare or unauthorized automated job configurations  
+* Monitor creation of new services or daemon processes  
+* Detect changes to service startup configuration or execution paths  
+* Correlate service activity with privileged account usage  
+* Alert on services installed from temporary or user-controlled locations  
+* Identify rare or unauthorized services configured for automatic execution  
 
 **KQL Detection Concepts:**
 
-* Task creation or modification events within scheduling systems  
-* Execution of programs initiated by scheduled or event-based triggers  
-* Repeated task execution occurring at unusual times or intervals  
+* Service installation or modification events recorded in system logs  
+* Service processes configured for automatic startup at system initialization  
+* Execution of services originating from non-standard or user-writable directories  
 
 **YARA Detection Concepts:**
 
-* Task configuration files containing suspicious execution logic  
-* Scripts designed to run automatically on schedule  
-* Executable components associated with automated task triggers  
+* Service binaries containing persistence or remote communication logic  
+* Configuration files defining automatic service execution behavior  
+* Executable components designed to operate as background daemons  
 
 **Mitigation:**
 
-* Restrict permissions to create or modify scheduled tasks  
-* Enforce task configuration auditing and approval workflows  
-* Monitor automated job execution and scheduling behavior  
-* Implement role-based access controls for task management systems  
+* Restrict permissions to create or modify system services  
+* Enforce service configuration auditing and approval workflows  
+* Monitor service startup behavior and configuration changes  
+* Implement application control policies for service executables  
 
 **Incident response:**
 
-* Identify newly created or modified scheduled tasks  
-* Disable unauthorized automated execution mechanisms  
-* Analyze task configuration and associated executable files  
-* Review execution history and scheduling timelines  
+* Identify newly created or modified services or daemons  
+* Disable or remove unauthorized service configurations  
+* Analyze associated service binaries and execution behavior  
+* Review system logs and service startup timelines  
 
 **Linking:**
 
-* Service & Daemon Persistence  
 * Registry-Based Persistence  
-* Log & Artifact Manipulation
+* Log & Artifact Manipulation  
+* Remote Service & Protocol Abuse
