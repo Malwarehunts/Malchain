@@ -43,3 +43,19 @@ Defensive efforts during EXPANSION should prioritize visibility into:
 **Directory Services Targeting** - Directory services targeting focuses on manipulating or querying centralized identity management systems to gain control over users, groups, or permissions. Attackers modify directory configurations or collect identity information to expand their reach. Because directory services govern authentication and authorization, compromise can affect the entire environment. Monitoring directory changes and enforcing strong administrative controls are key defenses.
 
 **Cloud & Hybrid Lateral Movement** - Cloud and hybrid lateral movement extends attacker control across cloud services, virtual environments, or hybrid infrastructure. Attackers leverage cloud identities, service accounts, and integration points to access additional systems beyond traditional networks. Because cloud environments often rely on centralized identity management, misuse can propagate quickly. Monitoring cloud access patterns and enforcing identity governance are essential for detection and containment.
+
+## Compilation Table
+
+| Capability                        | Trust Abused         | Typical Output        | Detection Priority | Telemetry Source  | Best Disruption Point |
+| --------------------------------- | -------------------- | --------------------- | ------------------ | ----------------- | --------------------- |
+| Living-off-the-Land Movement      | Trusted Tools        | Remote Execution      | High               | Endpoint, Network | Tool Restrictions     |
+| Credential Reuse                  | Identity             | Remote Access         | Critical           | Identity, Network | Credential Rotation   |
+| Pass-the-Hash / Ticket            | Authentication Trust | Authenticated Session | Critical           | Identity          | Credential Protection |
+| Remote Service Abuse              | Network Services     | Remote Execution      | High               | Endpoint, Network | Service Restrictions  |
+| Network Share Propagation         | File Sharing         | File Spread           | High               | Endpoint, Network | Share Controls        |
+| Privilege Escalation Across Hosts | System Privileges    | Elevated Access       | Critical           | Endpoint          | Privilege Controls    |
+| Trust Relationship Abuse          | Domain Trust         | Cross-System Access   | Critical           | Identity          | Trust Restrictions    |
+| Directory Services Targeting      | Directory Services   | Account Control       | Critical           | Identity          | Directory Monitoring  |
+| Cloud / Hybrid Lateral Movement   | Cloud Identity       | Cloud Access          | High               | Cloud             | Access Policies       |
+| Worm-like Propagation             | Network Trust        | Rapid Spread          | Critical           | Network           | Segmentation          |
+
