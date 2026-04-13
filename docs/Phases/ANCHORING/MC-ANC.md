@@ -41,3 +41,18 @@ Defensive efforts during ANCHORING should prioritize visibility into:
 **File less & In-Memory Persistence** - File less and in-memory persistence stores execution logic within system memory rather than on disk. Attackers use memory-resident techniques to maintain presence without leaving traditional file artifacts. This approach reduces forensic visibility and complicates detection. Monitoring memory activity and behavioral indicators is essential for identifying this capability.
 
 **Boot & Pre-OS Persistence** - Boot and pre-operating system persistence modifies firmware or boot components to execute malicious logic before the operating system loads. This capability provides deep system control and allows attackers to maintain presence even after system reinstallation. Because these components operate outside normal operating system controls, detection and remediation can be challenging. Firmware integrity validation and secure boot mechanisms are critical defensive measures.
+
+## Compilation Table
+
+| Capability                   | Trust Abused         | Typical Output       | Detection Priority | Telemetry Source | Best Disruption Point |
+| ---------------------------- | -------------------- | -------------------- | ------------------ | ---------------- | --------------------- |
+| Startup Entries              | User Session         | Auto Execution       | High               | Endpoint         | Startup Monitoring    |
+| Scheduled Tasks              | Task Scheduler       | Recurring Execution  | High               | Endpoint         | Task Restrictions     |
+| Registry Persistence         | System Registry      | Persistent Execution | Critical           | Endpoint         | Registry Monitoring   |
+| Service / Daemon Persistence | System Services      | Background Execution | High               | Endpoint         | Service Auditing      |
+| WMI Event Subscription       | Management Interface | Event Trigger        | High               | Endpoint         | WMI Controls          |
+| Browser Persistence          | Browser Trust        | Extension / Session  | Medium             | Endpoint         | Extension Management  |
+| Fileless Persistence         | Memory               | In-Memory Execution  | Critical           | Endpoint         | Memory Monitoring     |
+| Boot / PreOS Persistence     | Firmware             | Pre-Boot Execution   | Critical           | Endpoint         | Firmware Protection   |
+| Account Persistence          | Identity             | Continued Access     | Critical           | Identity         | Account Monitoring    |
+| Cloud Persistence            | Cloud Identity       | Persistent Access    | High               | Cloud            | Access Policies       |
