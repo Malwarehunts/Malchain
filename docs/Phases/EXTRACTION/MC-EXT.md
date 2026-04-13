@@ -1,5 +1,3 @@
-<img width="911" height="221" alt="image" src="https://github.com/user-attachments/assets/fedfaab7-bd63-4200-8c2f-9f894d5c0eed" /># EXTRACTION
-
 ## Phase Overview
 
 The EXTRACTION phase encompasses all techniques and capabilities that enable attackers to transfer data, maintain external command control, or achieve operational impact outside the compromised environment. Unlike EXPANSION, which focuses on gaining broader access and control, EXTRACTION focuses on data movement, communication, and operational outcomes. The transition from EXPANSION to EXTRACTION occurs when attacker activity shifts from internal movement to outbound transfer or coordination. This transition point is critical for preventing data loss, protecting sensitive information, and containing operational damage.
