@@ -1,4 +1,4 @@
-# EXTRACTION
+<img width="911" height="221" alt="image" src="https://github.com/user-attachments/assets/fedfaab7-bd63-4200-8c2f-9f894d5c0eed" /># EXTRACTION
 
 ## Phase Overview
 
@@ -47,3 +47,20 @@ Defensive efforts during EXTRACTION should prioritize visibility into:
 **Stenographic Data Transfer** - Stenographic data transfer conceals information within other files, such as images, audio, or documents. Attackers embed data within seemingly harmless content to evade detection during transmission. Because the carrier files appear legitimate, traditional security controls may not identify hidden information. Monitoring file structure anomalies and inspecting content integrity are key defensive techniques.
 
 **Multi-Channel Redundant Exfiltration** - Multi-channel redundant exfiltration uses multiple communication methods simultaneously or sequentially to ensure successful data transfer. Attackers implement fallback channels to maintain communication if one method is blocked. This capability increases resilience and reduces the likelihood of disruption. Monitoring coordinated communication patterns and blocking redundant channels are critical defensive measures.
+
+## Compilation Table
+
+| Capability                           | Trust Abused           | Typical Output     | Detection Priority | Telemetry Source  | Best Disruption Point  |
+| ------------------------------------ | ---------------------- | ------------------ | ------------------ | ----------------- | ---------------------- |
+| HTTP / HTTPS Data Exfiltration       | Web Trust              | Data Transfer      | Critical           | Network           | Outbound Filtering     |
+| DNS Tunneling                        | DNS Trust              | Encoded Traffic    | Critical           | Network           | DNS Monitoring         |
+| Cloud Storage Abuse                  | Cloud Trust            | Data Upload        | Critical           | Cloud             | Storage Controls       |
+| Messaging / Social Channels          | Communication Trust    | File Transfer      | High               | Endpoint, Network | Communication Controls |
+| FTP / SFTP Transfer                  | File Transfer Services | File Upload        | High               | Network           | Transfer Restrictions  |
+| Tor / Proxy / VPN Channels           | Network Routing        | Hidden Traffic     | High               | Network           | Tunnel Blocking        |
+| Encrypted Command & Control          | Encryption Trust       | Secure Channel     | Critical           | Network           | Traffic Inspection     |
+| Removable Media Extraction           | Physical Access        | Data Removal       | Medium             | Endpoint          | Device Control         |
+| Steganographic Transfer              | File Trust             | Hidden Data        | Medium             | Endpoint          | Content Inspection     |
+| Multi-Channel Redundant Exfiltration | Multiple Trust Paths   | Resilient Transfer | Critical           | Network           | Channel Blocking       |
+
+
