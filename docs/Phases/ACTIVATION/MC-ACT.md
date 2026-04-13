@@ -36,3 +36,18 @@ Defensive efforts during ACTIVATION should prioritize visibility into:
 **Browser Extension Execution** - Browser extension execution abuses the trust placed in browser add-ons or plugins. Attackers install or modify extensions to execute scripts within browser sessions. Because extensions operate within trusted user environments, they can access credentials, sessions, and data. Extension management and browser security policies are important defensive controls.
 
 **Boot or Firmware Execution** - Boot or firmware execution occurs before the operating system fully initializes. Attackers modify firmware or boot components to execute code at system startup. This capability provides deep system control and can bypass operating system defenses. Secure boot mechanisms and firmware integrity validation are critical defensive measures.
+
+## Compilation table
+
+| Capability                  | Trust Abused         | Typical Output         | Detection Priority | Telemetry Source  | Best Disruption Point |
+| --------------------------- | -------------------- | ---------------------- | ------------------ | ----------------- | --------------------- |
+| User Execution              | User Trust           | Process Creation       | High               | Endpoint          | Application Control   |
+| Script Execution            | Interpreter          | Script Runtime         | High               | Endpoint          | Script Blocking       |
+| Service Execution           | System Services      | Service Process        | High               | Endpoint          | Service Monitoring    |
+| DLL Side-Loading            | Application Trust    | Module Load            | Critical           | Endpoint          | Library Validation    |
+| WMI Execution               | Management Interface | Remote Execution       | High               | Endpoint, Network | WMI Restrictions      |
+| Scheduled / Task Execution  | Scheduler Trust      | Recurring Execution    | High               | Endpoint          | Task Restrictions     |
+| Browser Extension Execution | Browser Trust        | Extension Runtime      | Medium             | Endpoint          | Extension Control     |
+| Boot / Firmware Execution   | Firmware / Boot      | Pre-OS Execution       | Critical           | Endpoint          | Secure Boot           |
+| Remote Command Execution    | Remote Admin Tools   | Remote Process         | High               | Endpoint, Network | Access Control        |
+| Embedded / API Execution    | Application APIs     | Programmatic Execution | Medium             | Endpoint          | API Restrictions      |
