@@ -43,3 +43,18 @@ Defensive efforts during CONCEALMENT should prioritize visibility into:
 **Living-off-the-Land for Evasion** - Living-off-the-land for evasion uses legitimate system tools and built-in utilities to perform malicious actions. Attackers rely on trusted programs already present in the environment to avoid introducing suspicious files. This capability reduces the number of detectable artifacts and blends activity into normal system operations. Monitoring command usage patterns and abnormal tool behavior is important for detection.
 
 **Anti-Forensics & Cleanup** - Anti-forensics and cleanup remove traces of attacker activity after operations are completed. Attackers delete temporary files, clear logs, and remove persistence artifacts to reduce evidence of compromise. This capability complicates incident response and forensic analysis. Monitoring repeated cleanup actions and sudden loss of historical data is critical for identifying anti-forensic behavior.
+
+## Compilation Table
+
+| Capability                    | Trust Abused         | Typical Output         | Detection Priority | Telemetry Source | Best Disruption Point |
+| ----------------------------- | -------------------- | ---------------------- | ------------------ | ---------------- | --------------------- |
+| Obfuscation & Packing         | Code Trust           | Hidden Logic           | Medium             | Endpoint         | Code Inspection       |
+| Fileless Malware              | Memory               | Runtime Artifact       | High               | Endpoint         | Behavior Monitoring   |
+| Disabling Security Tools      | Security Controls    | Protection Loss        | Critical           | Endpoint         | Tamper Protection     |
+| Masquerading                  | User Trust           | False Identity         | Medium             | Endpoint         | Process Validation    |
+| Environment / Sandbox Evasion | Analysis Environment | Conditional Execution  | Medium             | Endpoint         | Behavior Analysis     |
+| Process Injection             | System Processes     | Injected Code          | Critical           | Endpoint         | Process Monitoring    |
+| Polymorphism / Metamorphism   | Detection Logic      | Variant Code           | Medium             | Endpoint         | Signature Updates     |
+| Log Manipulation              | Audit Logs           | Missing Evidence       | High               | Endpoint         | Log Integrity         |
+| Living-off-the-Land Evasion   | Trusted Tools        | Legitimate Command Use | Medium             | Endpoint         | Command Monitoring    |
+| Anti-Forensics Cleanup        | System Artifacts     | Evidence Removal       | High               | Endpoint         | Retention Controls    |
