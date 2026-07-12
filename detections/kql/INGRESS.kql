@@ -1,0 +1,84 @@
+// MalChain Detection Library — KQL (Microsoft Defender XDR / Sentinel Advanced Hunting)
+// Phase: INGRESS
+// NOTE: tune time ranges, thresholds and allow-lists to your environment before production use.
+
+// ==================================================================
+// MC-ING-01 — Removable Media & File Transfer
+// ==================================================================
+// Removable Media: execution or executable drop from removable drives
+DeviceFileEvents
+| where Timestamp > ago(14d)
+| where InitiatingProcessAccountName != "system"
+| where FolderPath matches regex @"^[D-Z]:\\" and (FileName endswith ".exe" or FileName endswith ".lnk" or FileName endswith ".scr" or FileName == "autorun.inf")
+| project Timestamp, DeviceName, FileName, FolderPath, InitiatingProcessAccountName, SHA256
+| join kind=leftouter (
+    DeviceProcessEvents | where FolderPath matches regex @"^[D-Z]:\\"
+    | project DeviceName, ExecFolder=FolderPath, ProcessCommandLine
+) on DeviceName
+
+// ==================================================================
+// MC-ING-02 — Malvertising & Drive-By Downloads
+// ==================================================================
+// Malvertising / Drive-by: browser spawning script interpreters or writing executables
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where InitiatingProcessFileName in~ ("chrome.exe","msedge.exe","firefox.exe","iexplore.exe","brave.exe")
+| where FileName in~ ("powershell.exe","pwsh.exe","cmd.exe","wscript.exe","cscript.exe","mshta.exe","rundll32.exe","regsvr32.exe")
+| project Timestamp, DeviceName, InitiatingProcessFileName, FileName, ProcessCommandLine, AccountName
+
+// ==================================================================
+// MC-ING-03 — Supply Chain Compromise
+// ==================================================================
+// Supply Chain: unexpected child process from a signed updater / installer
+DeviceProcessEvents
+| where Timestamp > ago(30d)
+| where InitiatingProcessFileName has_any ("update","installer","setup","msiexec.exe")
+| where FileName in~ ("powershell.exe","cmd.exe","wscript.exe","cscript.exe","rundll32.exe","regsvr32.exe","bitsadmin.exe","curl.exe","certutil.exe")
+| where ProcessCommandLine has_any ("http://","https://","-enc","DownloadString","Invoke-WebRequest")
+| project Timestamp, DeviceName, InitiatingProcessFileName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-ING-04 — Credential Abuse
+// ==================================================================
+// Credential Abuse: successful sign-ins from anomalous locations / impossible travel (identity)
+IdentityLogonEvents
+| where Timestamp > ago(7d)
+| where ActionType == "LogonSuccess"
+| summarize Countries=dcount(tostring(parse_json(AdditionalFields).Country)), Locations=make_set(tostring(parse_json(AdditionalFields).Country)) by AccountUpn, bin(Timestamp, 1h)
+| where Countries > 1
+| project Timestamp, AccountUpn, Countries, Locations
+
+// ==================================================================
+// MC-ING-05 — Malicious or Compromised USB Devices
+// ==================================================================
+// Malicious USB: new PnP HID / storage device followed by rapid process execution
+DeviceEvents
+| where Timestamp > ago(14d)
+| where ActionType in ("PnpDeviceConnected","UsbDriveMounted")
+| project ConnectTime=Timestamp, DeviceName, AdditionalFields
+| join kind=inner (
+    DeviceProcessEvents
+    | where FileName in~ ("cmd.exe","powershell.exe","wscript.exe","mshta.exe")
+    | project ExecTime=Timestamp, DeviceName, FileName, ProcessCommandLine
+) on DeviceName
+| where ExecTime between (ConnectTime .. (ConnectTime + 2m))
+
+// ==================================================================
+// MC-ING-06 — Watering Hole Attacks
+// ==================================================================
+// Watering Hole: navigation to a compromised site then payload retrieval
+DeviceNetworkEvents
+| where Timestamp > ago(7d)
+| where InitiatingProcessFileName in~ ("chrome.exe","msedge.exe","firefox.exe")
+| where RemoteUrl has_any (".hta",".jar",".ps1",".js",".vbs",".scr")
+| project Timestamp, DeviceName, RemoteUrl, RemoteIP, InitiatingProcessFileName
+
+// ==================================================================
+// MC-ING-07 — External Remote Services
+// ==================================================================
+// External Remote Services: external RDP/VPN success followed by admin tool use
+DeviceLogonEvents
+| where Timestamp > ago(7d)
+| where LogonType in ("RemoteInteractive","Network") and ActionType == "LogonSuccess"
+| where RemoteIPType == "Public"
+| project Timestamp, DeviceName, AccountName, RemoteIP, LogonType

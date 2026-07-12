@@ -1,0 +1,74 @@
+// MalChain Detection Library — KQL (Microsoft Defender XDR / Sentinel Advanced Hunting)
+// Phase: ACTIVATION
+// NOTE: tune time ranges, thresholds and allow-lists to your environment before production use.
+
+// ==================================================================
+// MC-ACT-01 — User-Executed Files
+// ==================================================================
+// User-Executed Files: process launched from Downloads/Temp by a user session
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FolderPath has_any (@"\Downloads\", @"\Temp\", @"\AppData\Local\Temp\", @"\Users\Public\")
+| where InitiatingProcessFileName in~ ("explorer.exe","outlook.exe","winrar.exe","7zFM.exe")
+| project Timestamp, DeviceName, AccountName, FileName, FolderPath, InitiatingProcessFileName, ProcessCommandLine, SHA256
+
+// ==================================================================
+// MC-ACT-02 — Script-Based Execution
+// ==================================================================
+// Script-Based Execution: encoded / obfuscated interpreter command lines
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("powershell.exe","pwsh.exe","wscript.exe","cscript.exe","mshta.exe")
+| where ProcessCommandLine has_any ("-enc","-e ","FromBase64String","IEX","Invoke-Expression","-nop","-w hidden","bypass","DownloadString")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName
+
+// ==================================================================
+// MC-ACT-03 — Service-Based Execution
+// ==================================================================
+// Service-Based Execution: new service created for code execution
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName =~ "sc.exe" and ProcessCommandLine has "create"
+    or (InitiatingProcessFileName =~ "services.exe" and FileName in~ ("cmd.exe","powershell.exe"))
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine, InitiatingProcessFileName
+
+// ==================================================================
+// MC-ACT-04 — DLL Side-Loading or Hijacking
+// ==================================================================
+// DLL Side-Loading: signed app loading an unsigned DLL from its own directory
+DeviceImageLoadEvents
+| where Timestamp > ago(7d)
+| where InitiatingProcessFolderPath !startswith "C:\\Windows"
+| where FolderPath =~ InitiatingProcessFolderPath
+| where isempty(Signer) or SignatureStatus != "Valid"
+| where FileName endswith ".dll"
+| project Timestamp, DeviceName, InitiatingProcessFileName, FileName, FolderPath, SignatureStatus
+
+// ==================================================================
+// MC-ACT-05 — WMI-Based Execution
+// ==================================================================
+// WMI-Based Execution: wmiprvse spawning interpreters (remote/lateral exec)
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where InitiatingProcessFileName =~ "wmiprvse.exe"
+| where FileName in~ ("powershell.exe","cmd.exe","wscript.exe","mshta.exe","rundll32.exe")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-ACT-06 — Browser Extension Execution
+// ==================================================================
+// Browser Extension Execution: new/modified extension manifest with broad permissions
+DeviceFileEvents
+| where Timestamp > ago(14d)
+| where FolderPath has_any (@"\Extensions\", @"\Extension Settings\")
+| where FileName in~ ("manifest.json","background.js","content.js")
+| project Timestamp, DeviceName, FolderPath, FileName, InitiatingProcessFileName, SHA256
+
+// ==================================================================
+// MC-ACT-07 — Boot / Firmware Execution
+// ==================================================================
+// Boot / Firmware Execution: bootloader / BCD tampering utilities
+DeviceProcessEvents
+| where Timestamp > ago(30d)
+| where FileName in~ ("bcdedit.exe","bootcfg.exe","mountvol.exe") and ProcessCommandLine has_any ("set","/set","testsigning","nointegritychecks")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine

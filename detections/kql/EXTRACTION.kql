@@ -1,0 +1,107 @@
+// MalChain Detection Library — KQL (Microsoft Defender XDR / Sentinel Advanced Hunting)
+// Phase: EXTRACTION
+// NOTE: tune time ranges, thresholds and allow-lists to your environment before production use.
+
+// ==================================================================
+// MC-EXT-01 — HTTP / HTTPS Data Exfiltration
+// ==================================================================
+// HTTP/HTTPS Exfil: large outbound upload to rare external host
+DeviceNetworkEvents
+| where Timestamp > ago(7d)
+| where ActionType == "ConnectionSuccess" and RemoteIPType == "Public"
+| summarize SentBytes=sum(tolong(coalesce(SentBytes,0))) by DeviceName, RemoteIP, RemoteUrl, InitiatingProcessFileName, bin(Timestamp,1h)
+| where SentBytes > 50000000
+| project Timestamp, DeviceName, RemoteUrl, RemoteIP, SentBytes, InitiatingProcessFileName
+
+// ==================================================================
+// MC-EXT-02 — DNS Tunneling
+// ==================================================================
+// DNS Tunneling: long / high-entropy subdomains and high query volume
+DeviceNetworkEvents
+| where Timestamp > ago(3d)
+| where ActionType == "DnsQueryResponse" or isnotempty(RemoteUrl)
+| extend Sub = tostring(split(RemoteUrl, ".")[0])
+| where strlen(Sub) > 30
+| summarize Queries=count(), MaxLen=max(strlen(Sub)) by DeviceName, Domain=strcat(tostring(split(RemoteUrl,".")[-2]),".",tostring(split(RemoteUrl,".")[-1])), bin(Timestamp,1h)
+| where Queries > 100
+| project Timestamp, DeviceName, Domain, Queries, MaxLen
+
+// ==================================================================
+// MC-EXT-03 — Cloud Storage Abuse
+// ==================================================================
+// Cloud Storage Abuse: upload utilities / SDKs contacting cloud storage
+DeviceNetworkEvents
+| where Timestamp > ago(7d)
+| where RemoteUrl has_any ("s3.amazonaws.com","blob.core.windows.net","storage.googleapis.com","dropboxapi.com","drive.google.com","mega.nz")
+| where InitiatingProcessFileName in~ ("powershell.exe","curl.exe","rclone.exe","python.exe","cmd.exe","aws.exe")
+| project Timestamp, DeviceName, RemoteUrl, InitiatingProcessFileName, InitiatingProcessCommandLine
+
+// ==================================================================
+// MC-EXT-04 — Messaging and Social Platform Channels
+// ==================================================================
+// Messaging/Social Channels: exfil via Telegram/Discord/webhook APIs
+DeviceNetworkEvents
+| where Timestamp > ago(7d)
+| where RemoteUrl has_any ("api.telegram.org","discord.com/api/webhooks","discordapp.com/api/webhooks","hooks.slack.com","pastebin.com")
+| where InitiatingProcessFileName !in~ ("chrome.exe","msedge.exe","firefox.exe","teams.exe","slack.exe","discord.exe")
+| project Timestamp, DeviceName, RemoteUrl, InitiatingProcessFileName, InitiatingProcessCommandLine
+
+// ==================================================================
+// MC-EXT-05 — FTP / SFTP / FTPS Transfer
+// ==================================================================
+// FTP/SFTP/FTPS Transfer: command-line FTP clients to external hosts
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("ftp.exe","winscp.com","winscp.exe","pscp.exe","psftp.exe","curl.exe") and ProcessCommandLine has_any ("ftp://","sftp://","ftps://","-put","put ")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-EXT-06 — Tor / Proxy / VPN Anonymization Channels
+// ==================================================================
+// Tor / Proxy / VPN Anonymization: connections to Tor / anonymizer infrastructure
+DeviceNetworkEvents
+| where Timestamp > ago(7d)
+| where RemoteUrl has_any (".onion","torproject.org") or InitiatingProcessFileName in~ ("tor.exe","obfs4proxy.exe","psiphon.exe")
+| project Timestamp, DeviceName, RemoteUrl, RemoteIP, InitiatingProcessFileName
+
+// ==================================================================
+// MC-EXT-07 — Encrypted Command-and-Control Channels
+// ==================================================================
+// Encrypted C2: periodic beaconing (regular interval, small jitter) to one host
+DeviceNetworkEvents
+| where Timestamp > ago(2d) and RemoteIPType == "Public" and ActionType == "ConnectionSuccess"
+| summarize Beacons=count(), Intervals=make_list(Timestamp,200) by DeviceName, RemoteIP, InitiatingProcessFileName
+| where Beacons > 50
+| project DeviceName, RemoteIP, InitiatingProcessFileName, Beacons
+// Post-process Intervals for low standard-deviation to confirm beaconing
+
+// ==================================================================
+// MC-EXT-08 — Removable Media Data Extraction
+// ==================================================================
+// Removable Media Data Extraction: bulk copy of documents to removable drive
+DeviceFileEvents
+| where Timestamp > ago(7d)
+| where ActionType == "FileCreated" and FolderPath matches regex @"^[D-Z]:\\"
+| where FileName has_any (".docx",".xlsx",".pdf",".pst",".zip",".7z",".sql",".csv")
+| summarize Files=count(), Bytes=sum(tolong(coalesce(FileSize,0))) by DeviceName, InitiatingProcessAccountName, bin(Timestamp,10m)
+| where Files > 25
+| project Timestamp, DeviceName, InitiatingProcessAccountName, Files, Bytes
+
+// ==================================================================
+// MC-EXT-09 — Steganographic Data Transfer
+// ==================================================================
+// Steganographic Data Transfer: stego tooling / image files with appended data
+DeviceProcessEvents
+| where Timestamp > ago(14d)
+| where FileName in~ ("steghide.exe","openstego.exe","outguess.exe","zsteg.exe") or ProcessCommandLine has_any ("steghide","Add-Content -Encoding Byte","copy /b image","Invoke-PSImage")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-EXT-10 — Multi-Channel Redundant Exfiltration
+// ==================================================================
+// Multi-Channel Redundant Exfil: one process using several distinct egress channels
+DeviceNetworkEvents
+| where Timestamp > ago(1d) and RemoteIPType == "Public"
+| summarize Channels=dcount(RemoteUrl), Protocols=make_set(RemotePort,10) by DeviceName, InitiatingProcessFileName, bin(Timestamp,30m)
+| where Channels > 15
+| project Timestamp, DeviceName, InitiatingProcessFileName, Channels, Protocols

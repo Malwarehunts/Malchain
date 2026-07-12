@@ -1,0 +1,84 @@
+// MalChain Detection Library — KQL (Microsoft Defender XDR / Sentinel Advanced Hunting)
+// Phase: ANCHORING
+// NOTE: tune time ranges, thresholds and allow-lists to your environment before production use.
+
+// ==================================================================
+// MC-ANC-01 — Startup & Logon Execution
+// ==================================================================
+// Startup & Logon: Run key or Startup-folder persistence created
+union
+(DeviceRegistryEvents
+ | where ActionType in ("RegistryValueSet","RegistryKeyCreated")
+ | where RegistryKey has_any (@"\CurrentVersion\Run", @"\CurrentVersion\RunOnce", @"\Winlogon")
+ | project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName),
+(DeviceFileEvents
+ | where FolderPath has @"\Start Menu\Programs\Startup\"
+ | project Timestamp, DeviceName, FolderPath, FileName, InitiatingProcessFileName)
+
+// ==================================================================
+// MC-ANC-02 — Scheduled & Triggered Execution
+// ==================================================================
+// Scheduled & Triggered: task created via schtasks/PowerShell with suspicious action
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where (FileName =~ "schtasks.exe" and ProcessCommandLine has "/create")
+    or (FileName in~ ("powershell.exe","pwsh.exe") and ProcessCommandLine has "Register-ScheduledTask")
+| where ProcessCommandLine has_any ("powershell","cmd","mshta","rundll32","http","AppData","Temp")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-ANC-03 — Service & Daemon Persistence
+// ==================================================================
+// Service & Daemon Persistence: auto-start service pointing to user-writable path
+DeviceRegistryEvents
+| where Timestamp > ago(14d)
+| where RegistryKey has @"\Services\" and RegistryValueName == "ImagePath"
+| where RegistryValueData has_any (@"\Users\", @"\Temp\", @"\AppData\", @"\ProgramData\", "powershell", "cmd /c")
+| project Timestamp, DeviceName, RegistryKey, RegistryValueData, InitiatingProcessFileName
+
+// ==================================================================
+// MC-ANC-04 — Registry-Based Persistence
+// ==================================================================
+// Registry-Based Persistence: less-common autostart locations
+DeviceRegistryEvents
+| where Timestamp > ago(14d)
+| where RegistryKey has_any (@"\Image File Execution Options", @"\AppInit_DLLs", @"\Userinit", @"\Shell", @"\CurrentVersion\Policies\Explorer\Run")
+| project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName
+
+// ==================================================================
+// MC-ANC-05 — Browser-Based Persistence
+// ==================================================================
+// Browser-Based Persistence: registry-forced extension load / DebuggerPath
+DeviceRegistryEvents
+| where Timestamp > ago(14d)
+| where RegistryKey has_any (@"\ExtensionInstallForcelist", @"\Chrome\NativeMessagingHosts", @"\Edge\NativeMessagingHosts")
+| project Timestamp, DeviceName, RegistryKey, RegistryValueName, RegistryValueData, InitiatingProcessFileName
+
+// ==================================================================
+// MC-ANC-06 — WMI & Event Subscription Persistence
+// ==================================================================
+// WMI Event Subscription Persistence: permanent consumer/binding creation
+DeviceProcessEvents
+| where Timestamp > ago(30d)
+| where ProcessCommandLine has_any ("__EventFilter","CommandLineEventConsumer","ActiveScriptEventConsumer","__FilterToConsumerBinding","root\subscription")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-ANC-07 — Fileless & In-Memory Persistence
+// ==================================================================
+// Fileless & In-Memory Persistence: registry blob storing encoded payload
+DeviceRegistryEvents
+| where Timestamp > ago(14d)
+| where strlen(RegistryValueData) > 2048
+| where RegistryValueData matches regex @"[A-Za-z0-9+/]{500,}={0,2}"
+| project Timestamp, DeviceName, RegistryKey, RegistryValueName, DataLen=strlen(RegistryValueData), InitiatingProcessFileName
+
+// ==================================================================
+// MC-ANC-08 — Boot & Pre-OS Persistence
+// ==================================================================
+// Boot & Pre-OS Persistence: bootkit / raw disk write tooling
+DeviceProcessEvents
+| where Timestamp > ago(30d)
+| where FileName in~ ("bcdedit.exe","bootim.exe","reagentc.exe") and ProcessCommandLine has_any ("set","disable","/set")
+    or ProcessCommandLine has_any (@"\.\PhysicalDrive0", "\Device\Harddisk0")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine

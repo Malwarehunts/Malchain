@@ -1,0 +1,106 @@
+// MalChain Detection Library — KQL (Microsoft Defender XDR / Sentinel Advanced Hunting)
+// Phase: CONCEALMENT
+// NOTE: tune time ranges, thresholds and allow-lists to your environment before production use.
+
+// ==================================================================
+// MC-CON-01 — Obfuscation & Packing
+// ==================================================================
+// Obfuscation & Packing: newly written PE with very high entropy sections
+DeviceFileEvents
+| where Timestamp > ago(7d)
+| where FileName endswith ".exe" or FileName endswith ".dll"
+| where FolderPath has_any (@"\Temp\", @"\AppData\", @"\ProgramData\", @"\Users\Public\")
+| project Timestamp, DeviceName, FileName, FolderPath, SHA256, InitiatingProcessFileName
+// Pivot SHA256 into a sandbox/entropy source; alert on packer indicators (UPX/MPRESS/Themida)
+
+// ==================================================================
+// MC-CON-02 — Fileless Malware Execution
+// ==================================================================
+// Fileless Execution: interpreter with no file, downloading & running in memory
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("powershell.exe","pwsh.exe")
+| where ProcessCommandLine has_any ("IEX","Invoke-Expression","DownloadString","Reflection.Assembly","[Convert]::FromBase64String","VirtualAlloc")
+| project Timestamp, DeviceName, AccountName, ProcessCommandLine, InitiatingProcessFileName
+
+// ==================================================================
+// MC-CON-03 — Security Tool Tampering
+// ==================================================================
+// Security Tool Tampering: defender / EDR service or exclusion manipulation
+union
+(DeviceProcessEvents
+ | where ProcessCommandLine has_any ("Set-MpPreference","DisableRealtimeMonitoring","Add-MpPreference -ExclusionPath","sc stop","net stop") and ProcessCommandLine has_any ("defender","sense","windefend","MsMpEng","exclusion")
+ | project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine),
+(DeviceRegistryEvents
+ | where RegistryKey has @"\Windows Defender" and RegistryValueName in ("DisableAntiSpyware","DisableRealtimeMonitoring")
+ | project Timestamp, DeviceName, RegistryKey, RegistryValueData, InitiatingProcessFileName)
+
+// ==================================================================
+// MC-CON-04 — Masquerading & Impersonation
+// ==================================================================
+// Masquerading: system-named binary running from a non-system path
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("svchost.exe","lsass.exe","services.exe","csrss.exe","winlogon.exe","explorer.exe")
+| where FolderPath !startswith "C:\\Windows"
+| project Timestamp, DeviceName, FileName, FolderPath, ProcessCommandLine, SHA256
+
+// ==================================================================
+// MC-CON-05 — Environment & Sandbox Evasion
+// ==================================================================
+// Sandbox / Environment Evasion: reconnaissance of VM & analysis artifacts
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where ProcessCommandLine has_any ("vmware","vbox","virtualbox","qemu","sbiedll","wireshark","procmon","Win32_ComputerSystem","NumberOfCores")
+| where FileName in~ ("wmic.exe","powershell.exe","reg.exe","cmd.exe")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-CON-06 — Process Injection
+// ==================================================================
+// Process Injection: cross-process handle open + remote thread indicators
+DeviceEvents
+| where Timestamp > ago(7d)
+| where ActionType in ("CreateRemoteThreadApiCall","WriteToLsassProcessMemory","QueueUserApcRemoteApiCall","SetThreadContextRemoteApiCall")
+| project Timestamp, DeviceName, ActionType, InitiatingProcessFileName, FileName, AdditionalFields
+
+// ==================================================================
+// MC-CON-07 — Polymorphism & Metamorphism
+// ==================================================================
+// Polymorphism/Metamorphism: many distinct hashes, same filename across fleet
+DeviceFileEvents
+| where Timestamp > ago(14d)
+| where ActionType == "FileCreated"
+| summarize DistinctHashes=dcount(SHA256), Hosts=dcount(DeviceName) by FileName
+| where DistinctHashes > 10 and Hosts > 3
+| project FileName, DistinctHashes, Hosts
+
+// ==================================================================
+// MC-CON-08 — Log & Artifact Manipulation
+// ==================================================================
+// Log & Artifact Manipulation: event-log clearing
+union
+(DeviceProcessEvents
+ | where (FileName =~ "wevtutil.exe" and ProcessCommandLine has_any ("cl ","clear-log"))
+     or (FileName in~ ("powershell.exe","pwsh.exe") and ProcessCommandLine has "Clear-EventLog")
+ | project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine),
+(DeviceEvents | where ActionType == "SecurityLogCleared" | project Timestamp, DeviceName, ActionType, InitiatingProcessFileName)
+
+// ==================================================================
+// MC-CON-09 — Living-off-the-Land for Evasion
+// ==================================================================
+// Living-off-the-Land for Evasion: proxy execution via trusted binaries
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ("regsvr32.exe","rundll32.exe","mshta.exe","installutil.exe","msbuild.exe","certutil.exe","regasm.exe","regsvcs.exe")
+| where ProcessCommandLine has_any ("http","scrobj","javascript:","-decode","-urlcache","/i:","AppData","Temp")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
+
+// ==================================================================
+// MC-CON-10 — Anti-Forensics & Cleanup
+// ==================================================================
+// Anti-Forensics: shadow copy deletion & timestomping
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where ProcessCommandLine has_any ("vssadmin delete shadows","wmic shadowcopy delete","Delete-VssShadow","fsutil usn deletejournal","bcdedit /set {default} recoveryenabled no","wbadmin delete catalog")
+| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine
